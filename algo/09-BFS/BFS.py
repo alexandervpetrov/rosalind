@@ -4,8 +4,6 @@ import sys
 ifs = sys.stdin
 ofs = sys.stdout
 
-from collections import defaultdict
-
 
 def numbers_from_line(d=' '):
     return [int(s) for s in ifs.readline().strip().split(d)
@@ -13,13 +11,26 @@ def numbers_from_line(d=' '):
 
 
 n, m = numbers_from_line()
-G = defaultdict(list)
+G = dict((v, []) for v in xrange(1, n+1))
 for __ in xrange(m):
     a, b = numbers_from_line()
     G[a].append(b)
-    G[b].append(a)
 
 
+def bfs(G, s):
+    D = dict((v, None) for v in G.iterkeys())
+    D[s] = 0
+    Q = [s]
+    while Q:
+        u = Q.pop(0)
+        for v in G[u]:
+            if D[v] is None:
+                D[v] = D[u] + 1
+                Q.append(v)
+    return D
 
 
-#ofs.write('%s\n' % ' '.join(map(str, L)))
+D = bfs(G, 1)
+DD = [D[v] for v in xrange(1, n+1)]
+
+ofs.write('%s\n' % ' '.join(str(d) if d is not None else '-1' for d in DD))
