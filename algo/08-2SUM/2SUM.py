@@ -38,11 +38,11 @@ def get_indices_sorting(A):
     neg = zero_l - 1
     pos = zero_r
     while 0 <= neg and pos < N:
-        while 0 <= neg and pos < N and -S[neg] < S[pos]:
+        if -S[neg] < S[pos]:
             neg -= 1
-        while 0 <= neg and pos < N and -S[neg] > S[pos]:
+        elif -S[neg] > S[pos]:
             pos += 1
-        if 0 <= neg and pos < N and -S[neg] == S[pos]:
+        else:
             p, q = I[neg], I[pos]
             return min(p, q), max(p, q)
     return None
