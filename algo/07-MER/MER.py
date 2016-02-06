@@ -21,10 +21,10 @@ def merge_sorted(A, B):
     i = 0
     j = 0
     while i < n and j < m:
-        while i < n and j < m and A[i] <= B[j]:
+        if A[i] <= B[j]:
             C.append(A[i])
             i += 1
-        while i < n and j < m and B[j] <= A[i]:
+        else:
             C.append(B[j])
             j += 1
     if i < n:
