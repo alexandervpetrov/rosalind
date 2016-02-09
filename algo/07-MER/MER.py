@@ -17,6 +17,8 @@ B = numbers_from_line()
 
 
 def merge_sorted(A, B):
+    n = len(A)
+    m = len(B)
     C = []
     i = 0
     j = 0
