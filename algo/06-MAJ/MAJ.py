@@ -25,6 +25,22 @@ def majority_element_lazy_to_think(A):
     return a if n > len(A)/2 else -1
 
 
-M = map(majority_element_lazy_to_think, AA)
+def majority_element_linear(A):
+    """O(n)"""
+    c = 0
+    current_major_candidate = None
+    for a in A:
+        if c == 0:
+            current_major_candidate = a
+            c = 1
+        elif a == current_major_candidate:
+            c += 1
+        else:
+            c -= 1
+    nc = sum(1 for a in A if a == current_major_candidate)
+    return current_major_candidate if nc > len(A)/2 else -1
+
+# M = map(majority_element_lazy_to_think, AA)
+M = map(majority_element_linear, AA)
 
 ofs.write('%s\n' % ' '.join(map(str, M)))
