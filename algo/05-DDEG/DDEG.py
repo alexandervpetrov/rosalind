@@ -1,26 +1,31 @@
-#!/usr/bin/env python2
-# -*- coding: utf-8 -*-
+#!/usr/bin/env python
+
 import sys
+import collections
+
 ifs = sys.stdin
 ofs = sys.stdout
 
-from collections import defaultdict
-
 
 def numbers_from_line(d=' '):
-    return [int(s) for s in ifs.readline().strip().split(d)
-            if len(s.strip()) > 0]
+    return [
+        int(s)
+        for s in ifs.readline().strip().split(d)
+        if len(s.strip()) > 0
+    ]
 
 
 n, m = numbers_from_line()
-G = defaultdict(list)
-for __ in xrange(m):
+G = collections.defaultdict(list)
+for __ in range(m):
     a, b = numbers_from_line()
     G[a].append(b)
     G[b].append(a)
 
+L = [
+    sum(len(G[vn]) for vn in G[v])
+    for v in range(1, n + 1)
+]
 
-L = [sum(len(G[vn]) for vn in G[v]) for v in xrange(1, n+1)]
-
-
-ofs.write('%s\n' % ' '.join(map(str, L)))
+ofs.write(' '.join(map(str, L)))
+ofs.write('\n')

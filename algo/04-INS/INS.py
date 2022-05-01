@@ -1,23 +1,22 @@
-#!/usr/bin/env python2
-# -*- coding: utf-8 -*-
+#!/usr/bin/env python
+
 import sys
+
 ifs = sys.stdin
 ofs = sys.stdout
 
 
 def numbers_from_line(d=' '):
-    return [int(s) for s in ifs.readline().strip().split(d)
-            if len(s.strip()) > 0]
+    return [
+        int(s)
+        for s in ifs.readline().strip().split(d)
+        if len(s.strip()) > 0
+    ]
 
 
-n = int(ifs.readline())
-A = numbers_from_line()
-
-# according to site, following can be improved to O(n*log(n))
-
-def insertion_sort_lazy_to_think(A):
+def run_insertion_sort(A):
     swaps = 0
-    for i in xrange(1, n):
+    for i in range(1, n):
         k = i
         while k > 0 and A[k] < A[k-1]:
             A[k-1], A[k] = A[k], A[k-1]
@@ -26,7 +25,10 @@ def insertion_sort_lazy_to_think(A):
     return swaps
 
 
-swaps = insertion_sort_lazy_to_think(A)
+n = int(ifs.readline())
+A = numbers_from_line()
 
+swaps = run_insertion_sort(A)
 
-ofs.write('%d\n' % swaps)
+ofs.write(str(swaps))
+ofs.write('\n')
