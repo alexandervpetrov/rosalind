@@ -1,74 +1,84 @@
-#!/usr/bin/env python2
-# -*- coding: utf-8 -*-
+#!/usr/bin/env python
+
 import sys
+import collections
+
 ifs = sys.stdin
 ofs = sys.stdout
 
-from operator import itemgetter
-from bisect import bisect_left, bisect_right
-from collections import defaultdict
-
 
 def numbers_from_line(d=' '):
-    return [int(s) for s in ifs.readline().strip().split(d)
-            if len(s.strip()) > 0]
+    return [
+        int(s)
+        for s in ifs.readline().strip().split(d)
+        if len(s.strip()) > 0
+    ]
+
+
+def find_by_hash_table(A, s_needed):
+    M = collections.defaultdict(list)
+    for i, a in enumerate(A):
+        M[a].append(i)
+    for a, a_indices in M.items():
+        b_indices = M.get(s_needed - a)
+        if b_indices is None:
+            continue
+        for p in a_indices:
+            for q in b_indices:
+                if p != q:
+                    return p, q
+    return None
+
+
+def find_by_iteration_in_sorted(A, s_needed):
+    A = [(n, i) for i, n in enumerate(A)]
+    A = sorted(A)
+    i = 0
+    j = len(A) - 1
+    while i < j:
+        s = A[i][0] + A[j][0]
+        if s == s_needed:
+            return (A[i][1], A[j][1])
+        if s < s_needed:
+            i += 1
+        else:
+            j -= 1
+    return None
+
+
+def make_ordered_indices(a):
+    if a is None:
+        return None
+    p, q = a
+    return (min(p, q), max(p, q))
 
 
 k, n = numbers_from_line()
-AA = []
-for _ in xrange(k):
+tests = []
+for __ in range(k):
     A = numbers_from_line()
-    AA.append(A)
+    tests.append(A)
 
+s_needed = 0
 
-def get_indices_sorting(A):
-    AI = sorted(enumerate(A), key=itemgetter(1))
-    I = map(itemgetter(0), AI)
-    S = map(itemgetter(1), AI)
-    N = len(S)
-    zero_l = bisect_left(S, 0)
-    zero_r = bisect_right(S, 0)
-    if zero_r == 0:
-        return None
-    if zero_r == N:
-        return None
-    if zero_l < zero_r - 1:
-        p, q = I[zero_l], I[zero_r-1]
-        return min(p, q), max(p, q)
-    neg = zero_l - 1
-    pos = zero_r
-    while 0 <= neg and pos < N:
-        if -S[neg] < S[pos]:
-            neg -= 1
-        elif -S[neg] > S[pos]:
-            pos += 1
-        else:
-            p, q = I[neg], I[pos]
-            return min(p, q), max(p, q)
-    return None
-
-
-def get_indices_hashing(A):
-    I = defaultdict(list)
-    for i, a in enumerate(A):
-        I[a].append(i)
-    if 0 in I:
-        I0 = I[0]
-        if len(I0) > 1:
-            p, q = I0[0], I0[1]
-            return min(p, q), max(p, q)
-    for a in I.iterkeys():
-        if a != 0 and (-a) in I:
-            p, q = I[a][0], I[-a][0]
-            return min(p, q), max(p, q)
-    return None
-
-
-#I = map(get_indices_sorting, AA)
-I = map(get_indices_hashing, AA)
+I = []
+for A in tests:
+    r1 = find_by_iteration_in_sorted(A, s_needed)
+    r1 = make_ordered_indices(r1)
+    r2 = find_by_hash_table(A, s_needed)
+    r2 = make_ordered_indices(r2)
+    assert (r1 is None) == (r2 is None)
+    if r1 is not None:
+        assert A[r1[0]] + A[r1[1]] == s_needed
+    if r2 is not None:
+        assert A[r2[0]] + A[r2[1]] == s_needed
+    I.append(r2)
 
 for i in I:
     if i is not None:
-        ofs.write('%d %d\n' % (i[0]+1, i[1]+1))
+        p, q = i
+        p, q = p + 1, q + 1
+        ofs.write('{} {}'.format(p, q))
     else:
-        ofs.write('-1\n')
+        ofs.write('-1')
+    ofs.write('\n')

@@ -1,16 +1,52 @@
 #!/usr/bin/env python
 
 import sys
+import functools
 
 ifs = sys.stdin
 ofs = sys.stdout
 
 
+@functools.lru_cache()
+def fib_recursive_dp(n):
+    if n == 0:
+        return 0
+    if n == 1:
+        return 1
+    return fib_recursive_dp(n - 1) + fib_recursive_dp(n - 2)
+
+
+def fib_generator():
+    f1 = 0
+    f2 = 1
+    while True:
+        yield f1
+        f1, f2 = f2, (f1 + f2)
+
+
+def fib(n):
+    f1 = 0
+    f2 = 1
+    for __ in range(n):
+        f1, f2 = f2, (f1 + f2)
+    return f1
+
+
 n = int(ifs.readline())
 
-f_cur = 0
-f_next = 1
-for __ in range(n):
-    f_cur, f_next = f_next, f_cur + f_next
+fn1 = fib_recursive_dp(n)
 
-ofs.write('{}\n'.format(f_cur))
+for k, fk in enumerate(fib_generator()):
+    if k == n:
+        break
+fn2 = fk
+
+fn3 = fib(n)
+
+assert fn1 == fn2
+assert fn1 == fn3
+
+fn = fn1
+
+ofs.write(str(fn))
+ofs.write('\n')
