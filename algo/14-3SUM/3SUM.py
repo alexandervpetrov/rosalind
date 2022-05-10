@@ -24,7 +24,8 @@ def find_by_hash_table(A, s_needed):
         a_indices = M[a]
         for b in numbers:
             b_indices = M[b]
-            c_indices = M.get(s_needed - a - b)
+            c = s_needed - a - b
+            c_indices = M.get(c)
             if c_indices is None:
                 continue
             for p in a_indices:
@@ -37,14 +38,10 @@ def find_by_hash_table(A, s_needed):
 
 def find_by_iteration_in_sorted(A, s_needed):
 
-    def _find_2sum(A, s_needed, index_to_skip):
-        i = 0
-        j = len(A) - 1
+    def _find_2sum(A, l, r, s_needed):
+        i = l
+        j = r
         while i < j:
-            if i == index_to_skip:
-                i += 1
-            if j == index_to_skip:
-                j -= 1
             s = A[i][0] + A[j][0]
             if s == s_needed:
                 return (A[i][1], A[j][1])
@@ -56,8 +53,10 @@ def find_by_iteration_in_sorted(A, s_needed):
 
     A = [(n, i) for i, n in enumerate(A)]
     A = sorted(A)
-    for a, i in A:
-        result = _find_2sum(A, s_needed - a, i)
+    n = len(A)
+    for k in range(n - 2):
+        a, i = A[k]
+        result = _find_2sum(A, k + 1, n - 1, s_needed - a)
         if result is not None:
             return i, result[0], result[1]
     return None
@@ -87,12 +86,12 @@ s_needed = 0
 
 I = []
 for A in tests:
-    # r1 = find_by_iteration_in_sorted(A, s_needed)
-    # r1 = make_ordered_indices(r1)
+    r1 = find_by_iteration_in_sorted(A, s_needed)
+    r1 = make_ordered_indices(r1)
     r2 = find_by_hash_table(A, s_needed)
     r2 = make_ordered_indices(r2)
-    # assert (r1 is None) == (r2 is None)
-    # verify(A, s_needed, r1)
+    assert (r1 is None) == (r2 is None)
+    verify(A, s_needed, r1)
     verify(A, s_needed, r2)
     I.append(r2)
 

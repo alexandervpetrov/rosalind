@@ -19,9 +19,14 @@ def find_by_hash_table(A, s_needed):
     M = collections.defaultdict(list)
     for i, a in enumerate(A):
         M[a].append(i)
-    for a, a_indices in M.items():
-        b_indices = M.get(s_needed - a)
+    numbers = list(M.keys())
+    for a in numbers:
+        a_indices = M[a]
+        b = s_needed - a
+        b_indices = M.get(b)
         if b_indices is None:
+            continue
+        if a == b and len(a_indices) < 2:
             continue
         for p in a_indices:
             for q in b_indices:
