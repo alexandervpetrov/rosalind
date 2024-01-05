@@ -14,29 +14,28 @@ def numbers_from_line(d=' '):
     ]
 
 
-def partition(A, l, r, pivot_pos):
+def swap(A, i, j):
+    A[i], A[j] = A[j], A[i]
 
-    def _partition(A, l, r, pivot):
-        assert l <= r
-        while True:
-            while l < r and A[l] <= pivot:
-                l += 1
-            while l < r and pivot < A[r]:
-                r -= 1
-            if l >= r:
-                assert l == r
-                return l
-            A[l], A[r] = A[r], A[l]
 
-    if l == r:
-        return
+def partition(A, beg, end, pivot_pos):
 
     pivot = A[pivot_pos]
-    A[l], A[pivot_pos] = A[pivot_pos], A[l]
-    pivot_pos = _partition(A, l + 1, r, pivot)
-    if pivot < A[pivot_pos]:
-        pivot_pos = max(l, pivot_pos - 1)
-    A[l], A[pivot_pos] = A[pivot_pos], A[l]
+    swap(A, beg, pivot_pos)
+
+    l = beg
+    r = end
+    while l <= r:
+        if A[l] <= pivot:
+            l += 1
+        elif A[r] > pivot:
+            r -= 1
+        else:
+            swap(A, l, r)
+            l += 1
+            r -= 1
+
+    swap(A, beg, l-1)
 
 
 def verify(A, pivot):
